@@ -1,5 +1,5 @@
 //
-//  RootViewController.swift
+//  RightViewController.swift
 //  CustomNavigationController
 //
 //  Created by Douglas Galante on 5/23/17.
@@ -8,14 +8,15 @@
 
 import UIKit
 
-class RootViewController: UIViewController {
+class RightViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .blue
+        self.view.backgroundColor = .yellow
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
-        print("hit viewWillAppear for RootViewController")
+        print("hit view did appear for RIGHT view controller")
     }
 }

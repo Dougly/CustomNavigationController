@@ -12,6 +12,8 @@
 		114851741ED4A1E000DAA987 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 114851731ED4A1E000DAA987 /* Assets.xcassets */; };
 		114851771ED4A1E000DAA987 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 114851751ED4A1E000DAA987 /* LaunchScreen.storyboard */; };
 		1148517F1ED4A81C00DAA987 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1148517E1ED4A81C00DAA987 /* RootViewController.swift */; };
+		114851811ED4B1A400DAA987 /* LeftViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114851801ED4B1A400DAA987 /* LeftViewController.swift */; };
+		114851831ED4B23100DAA987 /* RightViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114851821ED4B23100DAA987 /* RightViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		114851761ED4A1E000DAA987 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		114851781ED4A1E000DAA987 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1148517E1ED4A81C00DAA987 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		114851801ED4B1A400DAA987 /* LeftViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftViewController.swift; sourceTree = "<group>"; };
+		114851821ED4B23100DAA987 /* RightViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RightViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +61,8 @@
 				1148516C1ED4A1E000DAA987 /* AppDelegate.swift */,
 				1148516E1ED4A1E000DAA987 /* MasterViewController.swift */,
 				1148517E1ED4A81C00DAA987 /* RootViewController.swift */,
+				114851801ED4B1A400DAA987 /* LeftViewController.swift */,
+				114851821ED4B23100DAA987 /* RightViewController.swift */,
 				114851731ED4A1E000DAA987 /* Assets.xcassets */,
 				114851751ED4A1E000DAA987 /* LaunchScreen.storyboard */,
 				114851781ED4A1E000DAA987 /* Info.plist */,
@@ -137,6 +143,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1148516F1ED4A1E000DAA987 /* MasterViewController.swift in Sources */,
+				114851811ED4B1A400DAA987 /* LeftViewController.swift in Sources */,
+				114851831ED4B23100DAA987 /* RightViewController.swift in Sources */,
 				1148516D1ED4A1E000DAA987 /* AppDelegate.swift in Sources */,
 				1148517F1ED4A81C00DAA987 /* RootViewController.swift in Sources */,
 			);

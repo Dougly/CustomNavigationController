@@ -8,10 +8,26 @@
 
 import UIKit
 
+enum NavItem {
+    case center, left, right
+}
+
 class MasterViewController: UIViewController {
 
     var rootVC: UIViewController!
     let childVCContainerView = UIView()
+    
+    lazy var leftViewController: LeftViewController = {
+        let leftVC = LeftViewController()
+        self.addViewControllerAsChildViewController(childViewController: leftVC)
+        return leftVC
+    }()
+    
+    lazy var rightViewController: RightViewController = {
+        let rightVC = RightViewController()
+        self.addViewControllerAsChildViewController(childViewController: rightVC)
+        return rightVC
+    }()
     
     convenience init(rootVC: UIViewController) {
         self.init()
@@ -20,27 +36,71 @@ class MasterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .green
+        self.addViewControllerAsChildViewController(childViewController: rootVC)
         setupView()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+    
+    
+    
+    func leftNavButtonTapped() {
+        updateContainerView(navItem: .left)
     }
     
-    func setupView() {
+    func rightNavButtonTapped() {
+        updateContainerView(navItem: .right)
+    }
+    
+    func centerButtonTapped() {
+        updateContainerView(navItem: .center)
+    }
+    
+    private func updateContainerView(navItem: NavItem) {
+        leftViewController.view.isHidden = true
+        rightViewController.view.isHidden = true
+        rootVC.view.isHidden = true
+        
+        switch navItem {
+        case .left: leftViewController.view.isHidden = false
+        case .right: rightViewController.view.isHidden = false
+        case .center: rootVC.view.isHidden = false
+        }
+        
+    }
+    
+    private func addViewControllerAsChildViewController(childViewController: UIViewController) {
+        addChildViewController(childViewController)
+        self.childVCContainerView.addSubview(childViewController.view)
+        
+        childViewController.view.frame = self.childVCContainerView.frame
+        childViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        childViewController.didMove(toParentViewController: self)
+    }
+    
+    private func removeViewControllerAsChildViewController(childViewController: UIViewController) {
+        childViewController.willMove(toParentViewController: nil)
+        childViewController.view.removeFromSuperview()
+        childViewController.removeFromParentViewController()
+    }
+    
+    private func setupView() {
+        
+        updateContainerView(navItem: .center)
         
         let topBarView = UIView()
         let leftNavButton = UIButton(type: .system)
-        let centerItem = UILabel()
+        let centerButton = UIButton(type: .system)
         let rightNavButton = UIButton(type: .system)
         
         // View Propertes
-        topBarView.backgroundColor = .gray
+        topBarView.backgroundColor = .clear
         childVCContainerView.backgroundColor = .red
         leftNavButton.setTitle("Left", for: .normal)
-        rightNavButton.setTitle("right", for: .normal)
-        centerItem.text = "TEST"
+        leftNavButton.addTarget(self, action: #selector(leftNavButtonTapped), for: .touchUpInside)
+        rightNavButton.setTitle("Right", for: .normal)
+        rightNavButton.addTarget(self, action: #selector(rightNavButtonTapped), for: .touchUpInside)
+        centerButton.setTitle("Center", for: .normal)
+        centerButton.addTarget(self, action: #selector(centerButtonTapped), for: .touchUpInside)
         
         // addSubviews and constraints
         self.view.addSubview(topBarView)
@@ -60,30 +120,28 @@ class MasterViewController: UIViewController {
         childVCContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
 
         topBarView.addSubview(leftNavButton)
-        topBarView.addSubview(centerItem)
+        topBarView.addSubview(centerButton)
         topBarView.addSubview(rightNavButton)
         
-        centerItem.translatesAutoresizingMaskIntoConstraints = false
+        centerButton.translatesAutoresizingMaskIntoConstraints = false
         leftNavButton.translatesAutoresizingMaskIntoConstraints = false
         rightNavButton.translatesAutoresizingMaskIntoConstraints = false
         
-        centerItem.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor).isActive = true
-        centerItem.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor).isActive = true
-        centerItem.heightAnchor.constraint(equalTo: topBarView.heightAnchor).isActive = true
-        centerItem.widthAnchor.constraint(equalTo: centerItem.heightAnchor).isActive = true
+        centerButton.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor).isActive = true
+        centerButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor).isActive = true
+        centerButton.heightAnchor.constraint(equalTo: topBarView.heightAnchor).isActive = true
+        centerButton.widthAnchor.constraint(equalTo: centerButton.heightAnchor).isActive = true
         
         leftNavButton.leadingAnchor.constraint(equalTo: topBarView.leadingAnchor).isActive = true
-        leftNavButton.trailingAnchor.constraint(equalTo: centerItem.leadingAnchor).isActive = true
+        leftNavButton.trailingAnchor.constraint(equalTo: centerButton.leadingAnchor).isActive = true
         leftNavButton.topAnchor.constraint(equalTo: topBarView.topAnchor).isActive = true
         leftNavButton.bottomAnchor.constraint(equalTo: topBarView.bottomAnchor).isActive = true
         
-        rightNavButton.leadingAnchor.constraint(equalTo: centerItem.trailingAnchor).isActive = true
+        rightNavButton.leadingAnchor.constraint(equalTo: centerButton.trailingAnchor).isActive = true
         rightNavButton.trailingAnchor.constraint(equalTo: topBarView.trailingAnchor).isActive = true
         rightNavButton.topAnchor.constraint(equalTo: topBarView.topAnchor).isActive = true
         rightNavButton.bottomAnchor.constraint(equalTo: topBarView.bottomAnchor).isActive = true
     
     }
-
-
 }
 
