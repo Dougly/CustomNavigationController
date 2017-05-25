@@ -19,4 +19,8 @@ class LeftViewController: UIViewController {
         print("hit view did appear for LEFT view controller")
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        print("hit view will disappear for LEFT view controller")
+    }
+    
 }

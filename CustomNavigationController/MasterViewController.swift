@@ -8,9 +8,14 @@
 
 import UIKit
 
-enum NavItem {
-    case center, left, right
+
+enum Direction {
+    case left, right, center
 }
+
+// create 3 container views
+// add respective VCs to container views
+// animate container view constraints based on navigation item selected
 
 class MasterViewController: UIViewController {
 
@@ -32,49 +37,85 @@ class MasterViewController: UIViewController {
     convenience init(rootVC: UIViewController) {
         self.init()
         self.rootVC = rootVC
+        self.addViewControllerAsChildViewController(childViewController: rootVC)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addViewControllerAsChildViewController(childViewController: rootVC)
+        //addViewControllerAsChildViewController(childViewController: rootVC)
         setupView()
     }
 
     
     
     
-    func leftNavButtonTapped() {
-        updateContainerView(navItem: .left)
+    func leftNavButtonTapped(_ seder: UIButton) {
+        updateContainerView(fromDirection: .center, toDirection: .left)
     }
     
-    func rightNavButtonTapped() {
-        updateContainerView(navItem: .right)
+    func rightNavButtonTapped(_ sender: UIButton) {
+        updateContainerView(fromDirection: .center, toDirection: .right)
     }
     
-    func centerButtonTapped() {
-        updateContainerView(navItem: .center)
+    func centerButtonTapped(_ sender: UIButton) {
+        updateContainerView(fromDirection: .left, toDirection: .center)
     }
     
-    private func updateContainerView(navItem: NavItem) {
+    private func updateContainerView(fromDirection: Direction, toDirection: Direction) {
         leftViewController.view.isHidden = true
         rightViewController.view.isHidden = true
         rootVC.view.isHidden = true
         
-        switch navItem {
-        case .left: leftViewController.view.isHidden = false
+        switch toDirection {
+        case .left:
+            self.push(childViewController: leftViewController, fromDirection: .right, toDirection: .left)
+
+            
+            
         case .right: rightViewController.view.isHidden = false
-        case .center: rootVC.view.isHidden = false
+        case .center:
+            self.push(childViewController: rightViewController, fromDirection: .left, toDirection: .right)
+        }
+    }
+    
+    private func push(childViewController: UIViewController, fromDirection: Direction, toDirection: Direction) {
+        
+        childViewController.view.isHidden = false
+        
+        
+        var startXPosition = UIScreen.main.bounds.width
+        
+        if toDirection == .left {
+            startXPosition *= -1
         }
         
+        childViewController.view.frame = CGRect(x: startXPosition, y: 0, width: childVCContainerView.frame.width, height: childVCContainerView.frame.height)
+
+        
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            childViewController.view.frame = CGRect(x: 0, y: 0, width: self.childVCContainerView.frame.width, height: self.childVCContainerView.frame.height)
+            self.view.layoutIfNeeded()
+        }) { (completion) in
+            childViewController.didMove(toParentViewController: self)
+        }
+
+    }
+    
+    private func pop(childViewController: UIViewController) {
+        removeViewControllerAsChildViewController(childViewController: childViewController)
     }
     
     private func addViewControllerAsChildViewController(childViewController: UIViewController) {
         addChildViewController(childViewController)
         self.childVCContainerView.addSubview(childViewController.view)
         
-        childViewController.view.frame = self.childVCContainerView.frame
-        childViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        childViewController.view.frame = CGRect(x: 0, y: 0, width: childVCContainerView.frame.width, height: childVCContainerView.frame.height)
+        childViewController.view.bounds = childVCContainerView.bounds
+        
+        
         childViewController.didMove(toParentViewController: self)
+        
     }
     
     private func removeViewControllerAsChildViewController(childViewController: UIViewController) {
@@ -85,7 +126,6 @@ class MasterViewController: UIViewController {
     
     private func setupView() {
         
-        updateContainerView(navItem: .center)
         
         let topBarView = UIView()
         let leftNavButton = UIButton(type: .system)
@@ -116,8 +156,8 @@ class MasterViewController: UIViewController {
         
         childVCContainerView.topAnchor.constraint(equalTo: topBarView.bottomAnchor).isActive = true
         childVCContainerView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        childVCContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        childVCContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        childVCContainerView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        childVCContainerView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
 
         topBarView.addSubview(leftNavButton)
         topBarView.addSubview(centerButton)
