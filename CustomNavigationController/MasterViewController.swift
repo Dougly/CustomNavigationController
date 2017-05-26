@@ -16,13 +16,12 @@ enum Direction {
 
 class MasterViewController: UIViewController {
 
-    
     let topBarView = UIView()
     let leftNavButton = UIButton(type: .system)
     let centerButton = UIButton(type: .system)
-    var centerButtonXConstaint = NSLayoutConstraint()
-    
     let rightNavButton = UIButton(type: .system)
+    var centerX: NSLayoutConstraint?
+    
     var rootVC: UIViewController!
     let childVCContainerView = UIView()
     var currentVC: UIViewController!
@@ -53,14 +52,17 @@ class MasterViewController: UIViewController {
     
     func leftNavButtonTapped(_ seder: UIButton) {
         updateContainerView(to: .left)
+        animatedNavBar(direction: .left)
     }
     
     func rightNavButtonTapped(_ sender: UIButton) {
         updateContainerView(to: .right)
+        animatedNavBar(direction: .right)
     }
     
     func centerButtonTapped(_ sender: UIButton) {
         updateContainerView(to: .center)
+        animatedNavBar(direction: .center)
     }
     
     private func updateContainerView(to direction: Direction) {
@@ -102,6 +104,21 @@ class MasterViewController: UIViewController {
             }
         }
 
+    }
+    
+    private func animatedNavBar(direction: Direction) {
+        switch direction {
+        case .left: animateNavBar(multiplier: 50)
+        case .right: animateNavBar(multiplier: -50)
+        case .center: animateNavBar(multiplier: 0)
+        }
+    }
+    
+    private func animateNavBar(multiplier: CGFloat) {
+        UIView.animate(withDuration: 0.3) {
+            self.centerX?.constant = multiplier
+            self.view.layoutIfNeeded()
+        }
     }
     
    
@@ -175,18 +192,19 @@ class MasterViewController: UIViewController {
         leftNavButton.translatesAutoresizingMaskIntoConstraints = false
         rightNavButton.translatesAutoresizingMaskIntoConstraints = false
         
-        centerButton.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor).isActive = true
+        centerX = centerButton.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor)
+        centerX?.isActive = true
         centerButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor).isActive = true
         centerButton.heightAnchor.constraint(equalTo: topBarView.heightAnchor).isActive = true
         centerButton.widthAnchor.constraint(equalTo: centerButton.heightAnchor).isActive = true
         
-        leftNavButton.leadingAnchor.constraint(equalTo: topBarView.leadingAnchor).isActive = true
         leftNavButton.trailingAnchor.constraint(equalTo: centerButton.leadingAnchor).isActive = true
+        leftNavButton.widthAnchor.constraint(equalTo: centerButton.widthAnchor).isActive = true
         leftNavButton.topAnchor.constraint(equalTo: topBarView.topAnchor).isActive = true
         leftNavButton.bottomAnchor.constraint(equalTo: topBarView.bottomAnchor).isActive = true
         
         rightNavButton.leadingAnchor.constraint(equalTo: centerButton.trailingAnchor).isActive = true
-        rightNavButton.trailingAnchor.constraint(equalTo: topBarView.trailingAnchor).isActive = true
+        rightNavButton.widthAnchor.constraint(equalTo: centerButton.widthAnchor).isActive = true
         rightNavButton.topAnchor.constraint(equalTo: topBarView.topAnchor).isActive = true
         rightNavButton.bottomAnchor.constraint(equalTo: topBarView.bottomAnchor).isActive = true
     
