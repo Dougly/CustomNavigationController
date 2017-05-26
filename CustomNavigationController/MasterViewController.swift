@@ -13,124 +13,132 @@ enum Direction {
     case left, right, center
 }
 
-// create 3 container views
-// add respective VCs to container views
-// animate container view constraints based on navigation item selected
 
 class MasterViewController: UIViewController {
 
+    
+    let topBarView = UIView()
+    let leftNavButton = UIButton(type: .system)
+    let centerButton = UIButton(type: .system)
+    var centerButtonXConstaint = NSLayoutConstraint()
+    
+    let rightNavButton = UIButton(type: .system)
     var rootVC: UIViewController!
     let childVCContainerView = UIView()
+    var currentVC: UIViewController!
     
     lazy var leftViewController: LeftViewController = {
         let leftVC = LeftViewController()
-        self.addViewControllerAsChildViewController(childViewController: leftVC)
+        self.addViewControllerAsChildViewController(childViewController: leftVC, isRootVC: false)
         return leftVC
     }()
     
     lazy var rightViewController: RightViewController = {
         let rightVC = RightViewController()
-        self.addViewControllerAsChildViewController(childViewController: rightVC)
+        self.addViewControllerAsChildViewController(childViewController: rightVC, isRootVC: false)
         return rightVC
     }()
     
     convenience init(rootVC: UIViewController) {
         self.init()
         self.rootVC = rootVC
-        self.addViewControllerAsChildViewController(childViewController: rootVC)
+        self.addViewControllerAsChildViewController(childViewController: rootVC, isRootVC: true)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //addViewControllerAsChildViewController(childViewController: rootVC)
         setupView()
     }
 
     
-    
-    
     func leftNavButtonTapped(_ seder: UIButton) {
-        updateContainerView(fromDirection: .center, toDirection: .left)
+        updateContainerView(to: .left)
     }
     
     func rightNavButtonTapped(_ sender: UIButton) {
-        updateContainerView(fromDirection: .center, toDirection: .right)
+        updateContainerView(to: .right)
     }
     
     func centerButtonTapped(_ sender: UIButton) {
-        updateContainerView(fromDirection: .left, toDirection: .center)
+        updateContainerView(to: .center)
     }
     
-    private func updateContainerView(fromDirection: Direction, toDirection: Direction) {
-        leftViewController.view.isHidden = true
-        rightViewController.view.isHidden = true
-        rootVC.view.isHidden = true
+    private func updateContainerView(to direction: Direction) {
         
-        switch toDirection {
+        switch direction {
         case .left:
-            self.push(childViewController: leftViewController, fromDirection: .right, toDirection: .left)
-
-            
-            
-        case .right: rightViewController.view.isHidden = false
+            self.push(newVC: leftViewController, inDirection: .left)
+        case .right:
+            push(newVC: rightViewController, inDirection: .right)
         case .center:
-            self.push(childViewController: rightViewController, fromDirection: .left, toDirection: .right)
+            if centerButton.center.x > UIScreen.main.bounds.width / 2 {
+                push(newVC: rootVC, inDirection: .right)
+            } else {
+                push(newVC: rootVC, inDirection: .left)
+
+            }
         }
     }
     
-    private func push(childViewController: UIViewController, fromDirection: Direction, toDirection: Direction) {
-        
-        childViewController.view.isHidden = false
-        
+    private func push(newVC: UIViewController, inDirection: Direction) {
         
         var startXPosition = UIScreen.main.bounds.width
-        
-        if toDirection == .left {
+        if inDirection == .left {
             startXPosition *= -1
         }
         
-        childViewController.view.frame = CGRect(x: startXPosition, y: 0, width: childVCContainerView.frame.width, height: childVCContainerView.frame.height)
+        newVC.view.frame = CGRect(x: startXPosition, y: 0, width: childVCContainerView.frame.width, height: childVCContainerView.frame.height)
 
         
         
         UIView.animate(withDuration: 0.5, animations: {
-            childViewController.view.frame = CGRect(x: 0, y: 0, width: self.childVCContainerView.frame.width, height: self.childVCContainerView.frame.height)
+            newVC.view.frame = CGRect(x: 0, y: 0, width: self.childVCContainerView.frame.width, height: self.childVCContainerView.frame.height)
+            self.currentVC.view.frame = CGRect(x: startXPosition * -1, y: 0, width: self.childVCContainerView.frame.width, height: self.childVCContainerView.frame.height)
             self.view.layoutIfNeeded()
-        }) { (completion) in
-            childViewController.didMove(toParentViewController: self)
+        }) { (success) in
+            if success {
+                newVC.didMove(toParentViewController: self)
+                self.currentVC = newVC
+            }
         }
 
     }
     
-    private func pop(childViewController: UIViewController) {
-        removeViewControllerAsChildViewController(childViewController: childViewController)
-    }
+   
     
-    private func addViewControllerAsChildViewController(childViewController: UIViewController) {
+    private func addViewControllerAsChildViewController(childViewController: UIViewController, isRootVC: Bool) {
         addChildViewController(childViewController)
         self.childVCContainerView.addSubview(childViewController.view)
         
-        childViewController.view.frame = CGRect(x: 0, y: 0, width: childVCContainerView.frame.width, height: childVCContainerView.frame.height)
+        childViewController.view.frame = CGRect(x: 0,
+                                                y: 0,
+                                                width: childVCContainerView.frame.width,
+                                                height: childVCContainerView.frame.height)
+        
+        
         childViewController.view.bounds = childVCContainerView.bounds
         
-        
-        childViewController.didMove(toParentViewController: self)
+        if isRootVC {
+            currentVC = childViewController
+            childViewController.didMove(toParentViewController: self)
+        }
         
     }
     
-    private func removeViewControllerAsChildViewController(childViewController: UIViewController) {
-        childViewController.willMove(toParentViewController: nil)
-        childViewController.view.removeFromSuperview()
-        childViewController.removeFromParentViewController()
-    }
+//    private func removeViewControllerAsChildViewController(childViewController: UIViewController) {
+//        childViewController.willMove(toParentViewController: nil)
+//        childViewController.view.removeFromSuperview()
+//        childViewController.removeFromParentViewController()
+//    }
+//    
+//    private func pop(childViewController: UIViewController) {
+//        removeViewControllerAsChildViewController(childViewController: childViewController)
+//    }
     
     private func setupView() {
         
         
-        let topBarView = UIView()
-        let leftNavButton = UIButton(type: .system)
-        let centerButton = UIButton(type: .system)
-        let rightNavButton = UIButton(type: .system)
+        
         
         // View Propertes
         topBarView.backgroundColor = .clear
